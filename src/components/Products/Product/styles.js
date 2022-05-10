@@ -5,7 +5,8 @@ export default makeStyles(() => ({
     maxWidth: "100%",
   },
   media: {
-    height: 0,
+    height: 75,
+    maxWidth: 430,
     paddingTop: "56.25%", //16:9
   },
   cardActions: {
@@ -15,5 +16,11 @@ export default makeStyles(() => ({
   cardContent: {
     display: "flex",
     justifyContent: "space-between",
+  },
+  description: {
+    fontSize: 15,
+  },
+  price: {
+    marginLeft: 10,
   },
 }));

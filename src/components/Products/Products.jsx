@@ -4,22 +4,7 @@ import Product from "./Product/Product";
 
 import useStyles from "./styles";
 
-const products = [
-  {
-    id: 1,
-    name: "AMD CPU",
-    description: "AMD Ryzen 7 2700X",
-    price: "$219.99",
-  },
-  {
-    id: 2,
-    name: "Intel CPU",
-    description: "Intel Core i9-12900k",
-    price: "$599.95",
-  },
-];
-
-const Products = () => {
+const Products = ({ products, onAddToCart }) => {
   const classes = useStyles();
 
   return (
@@ -28,7 +13,7 @@ const Products = () => {
       <Grid container justifyContent="center" spacing={4}>
         {products.map((product) => (
           <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <Product product={product}></Product>
+            <Product product={product} onAddToCart={onAddToCart}></Product>
           </Grid>
         ))}
       </Grid>
