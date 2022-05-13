@@ -5,6 +5,9 @@ import { Products, Navbar, Cart, Checkout } from "./components";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
+import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
+
 const App = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState({ line_items: [] });
