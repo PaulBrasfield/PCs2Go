@@ -1,37 +1,36 @@
 import React from "react";
 import { Container, Typography, Button, Grid } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import useStyles from "./styles";
+
 import CartItem from "./CartItem/CartItem";
+import useStyles from "./styles";
 
-const Cart = ({
-  cart,
-  handleUpdateCartQty,
-  handleRemoveFromCart,
-  handleEmptyCart,
-}) => {
+const Cart = ({ cart, onUpdateCartQty, onRemoveFromCart, onEmptyCart }) => {
   const classes = useStyles();
-  const isEmpty = !cart.line_items.length;
 
-  const EmptyCart = () => (
+  const handleEmptyCart = () => onEmptyCart();
+
+  const renderEmptyCart = () => (
     <Typography variant="subtitle1">
-      You have no items in your cart.
-      <br />
-      <Link to="/" className={classes.link}>
-        Start adding some!
+      You have no items in your shopping cart,&nbsp;
+      <Link className={classes.link} to="/">
+        start adding some
       </Link>
+      !
     </Typography>
   );
 
-  const FilledCart = () => (
-    <div>
+  if (!cart.line_items) return "Loading";
+
+  const renderCart = () => (
+    <>
       <Grid container spacing={3}>
-        {cart.line_items.map((item) => (
-          <Grid item xs={12} s={4} key={item.id}>
+        {cart.line_items.map((lineItem) => (
+          <Grid item xs={12} sm={4} key={lineItem.id}>
             <CartItem
-              item={item}
-              onUpdateCartQty={handleUpdateCartQty}
-              onRemoveFromCart={handleRemoveFromCart}
+              item={lineItem}
+              onUpdateCartQty={onUpdateCartQty}
+              onRemoveFromCart={onRemoveFromCart}
             />
           </Grid>
         ))}
@@ -49,12 +48,12 @@ const Cart = ({
             color="secondary"
             onClick={handleEmptyCart}
           >
-            Empty Cart
+            Empty cart
           </Button>
           <Button
+            className={classes.checkoutButton}
             component={Link}
             to="/checkout"
-            className={classes.checkoutButton}
             size="large"
             type="button"
             variant="contained"
@@ -64,12 +63,8 @@ const Cart = ({
           </Button>
         </div>
       </div>
-    </div>
+    </>
   );
-
-  if (!cart.line_items) {
-    return "Loading...";
-  }
 
   return (
     <Container>
@@ -77,7 +72,7 @@ const Cart = ({
       <Typography className={classes.title} variant="h3" gutterBottom>
         Your Shopping Cart
       </Typography>
-      {isEmpty ? <EmptyCart /> : <FilledCart />}
+      {!cart.line_items.length ? renderEmptyCart() : renderCart()}
     </Container>
   );
 };

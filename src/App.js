@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { commerce } from "./lib/commerce";
-
-import { Products, Navbar, Cart, Checkout } from "./components";
-
+import { CssBaseline } from "@material-ui/core";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import { loadStripe } from "@stripe/stripe-js";
-// import { Elements } from "@stripe/react-stripe-js";
+import { PrimarySearchAppBar, Products, Cart, Checkout } from "./components";
+import { commerce } from "./lib/commerce";
 
 const App = () => {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState({ line_items: [] });
+  const [cart, setCart] = useState({});
   const [order, setOrder] = useState({});
   const [errorMessage, setErrorMessage] = useState("");
 
-  //async = try-catch but cleaner
   const fetchProducts = async () => {
     const { data } = await commerce.products.list();
+
+    console.log(data);
+
+    setProducts(data);
+  };
+
+  const fetchProductsSort = async (sortType, sortOrder) => {
+    const { data } = await commerce.products.list({
+      sortBy: sortType,
+      sortDirection: sortOrder,
+    });
 
     setProducts(data);
   };
@@ -26,27 +34,27 @@ const App = () => {
   };
 
   const handleAddToCart = async (productId, quantity) => {
-    const { cart } = await commerce.cart.add(productId, quantity);
+    const item = await commerce.cart.add(productId, quantity);
 
-    setCart(cart);
+    setCart(item.cart);
   };
 
-  const handleUpdateCartQty = async (productId, quantity) => {
-    const { cart } = await commerce.cart.update(productId, { quantity });
+  const handleUpdateCartQty = async (lineItemId, quantity) => {
+    const response = await commerce.cart.update(lineItemId, { quantity });
 
-    setCart(cart);
+    setCart(response.cart);
   };
 
-  const handleRemoveFromCart = async (productId) => {
-    const { cart } = await commerce.cart.remove(productId);
+  const handleRemoveFromCart = async (lineItemId) => {
+    const response = await commerce.cart.remove(lineItemId);
 
-    setCart(cart);
+    setCart(response.cart);
   };
 
   const handleEmptyCart = async () => {
-    const { cart } = await commerce.cart.empty();
+    const response = await commerce.cart.empty();
 
-    setCart(cart);
+    setCart(response.cart);
   };
 
   const refreshCart = async () => {
@@ -63,6 +71,7 @@ const App = () => {
       );
 
       setOrder(incomingOrder);
+
       refreshCart();
     } catch (error) {
       setErrorMessage(error.data.error.message);
@@ -74,25 +83,38 @@ const App = () => {
     fetchCart();
   }, []);
 
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+
   return (
     <Router>
-      <div>
-        <Navbar totalItems={cart.total_items} />
+      <div style={{ display: "flex" }}>
+        <CssBaseline />
+        <PrimarySearchAppBar
+          totalItems={cart.total_items}
+          handleDrawerToggle={handleDrawerToggle}
+        />
         <Routes>
           <Route
+            exact
             path="/"
             element={
-              <Products products={products} onAddToCart={handleAddToCart} />
+              <Products
+                productsSort={fetchProductsSort}
+                products={products}
+                onAddToCart={handleAddToCart}
+                handleUpdateCartQty
+              />
             }
           />
           <Route
+            exact
             path="/cart"
             element={
               <Cart
                 cart={cart}
-                handleUpdateCartQty={handleUpdateCartQty}
-                handleRemoveFromCart={handleRemoveFromCart}
-                handleEmptyCart={handleEmptyCart}
+                onUpdateCartQty={handleUpdateCartQty}
+                onRemoveFromCart={handleRemoveFromCart}
+                onEmptyCart={handleEmptyCart}
               />
             }
           />
@@ -107,7 +129,7 @@ const App = () => {
                 error={errorMessage}
               />
             }
-          ></Route>
+          />
         </Routes>
       </div>
     </Router>
