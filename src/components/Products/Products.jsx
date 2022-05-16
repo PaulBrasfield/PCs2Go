@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import Product from "./Product/Product";
-import SortBar from "../SortBar";
+import SortBar from "../SortBar/SortBar";
 
 import useStyles from "./styles";
 
