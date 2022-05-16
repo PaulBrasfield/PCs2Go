@@ -76,6 +76,13 @@ const PaymentForm = ({
             <form onSubmit={(e) => handleSubmit(e, elements, stripe)}>
               <CardElement />
               <br /> <br />
+              <p style={{ textAlign: "center" }}>
+                Please use Stripe's test card to try out payment:
+                <br /> <strong>Card Number</strong>: 4242 4242 4242 4242 <br />
+                <strong>Exp</strong>: 05/27 <br />
+                <strong>CVV</strong>: 424 <br />
+                <strong>Zip</strong>: 42424
+              </p>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Button variant="outlined" onClick={backStep}>
                   Back
